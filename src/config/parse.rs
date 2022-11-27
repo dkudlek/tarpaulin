@@ -91,7 +91,14 @@ pub(super) fn get_target_dir(args: &ArgMatches) -> Option<PathBuf> {
 }
 
 pub(super) fn get_root(args: &ArgMatches) -> Option<PathBuf> {
-    args.value_of("root").map(PathBuf::from)
+    if (args.is_present("root")) {
+        args.value_of("root").map(PathBuf::from)
+    } else {
+        match env::current_dir() {
+            Ok(path) => Some(path),
+            Err(..) => None,
+        }
+    }
 }
 
 pub(super) fn get_ci(args: &ArgMatches) -> Option<CiService> {

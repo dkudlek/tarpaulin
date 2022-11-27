@@ -7,7 +7,7 @@ use std::io::Write;
 use std::path::Path;
 
 pub fn export(coverage_data: &TraceMap, config: &Config) -> Result<(), RunError> {
-    let file_path = config.output_dir().join("lcov.info");
+    let file_path = config.root().join(config.output_dir().join("lcov.info"));
     let mut file = match File::create(file_path) {
         Ok(k) => k,
         Err(e) => return Err(RunError::Lcov(format!("File is not writeable: {}", e))),
