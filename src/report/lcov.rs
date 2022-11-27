@@ -1,8 +1,10 @@
 use crate::config::Config;
 use crate::errors::RunError;
+use crate::path_utils::fix_unc_path;
 use crate::traces::{CoverageStat, TraceMap};
 use std::fs::File;
 use std::io::Write;
+use std::path::Path;
 
 pub fn export(coverage_data: &TraceMap, config: &Config) -> Result<(), RunError> {
     let file_path = config.output_dir().join("lcov.info");
@@ -16,7 +18,8 @@ pub fn export(coverage_data: &TraceMap, config: &Config) -> Result<(), RunError>
             continue;
         }
         writeln!(file, "TN:")?;
-        writeln!(file, "SF:{}", path.to_str().unwrap())?;
+        let path_sanitized = fix_unc_path(Path::new(path.as_os_str()));
+        writeln!(file, "SF:{}", path_sanitized.to_str().unwrap())?;
 
         let mut fns: Vec<String> = vec![];
         let mut fnda: Vec<String> = vec![];
